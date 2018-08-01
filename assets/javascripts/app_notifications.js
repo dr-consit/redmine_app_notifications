@@ -44,6 +44,22 @@ $(document).ready(function()
 		return false;
 	});
 
-	var countText = $("#notification_count").text();
-	$("#notification_count").replaceWith("<span id='notification_count'>" + countText + "</span>");
+        $.ajax({
+        type: "GET",
+        url: "/app-notifications/unread-number/",
+        dataType: 'json',
+        success: function(data) {
+                     $("#notification_count").text(data);
+                     $("#notification_count").show();
+                 }
+        });
+        $("#notification_count").click(function()
+        {
+                window.open("/app-notifications/", "_blank");
+        });
+        $("#notification_count").hover(function()
+        {
+                $(this).css("cursor","pointer");
+        });
+
 });

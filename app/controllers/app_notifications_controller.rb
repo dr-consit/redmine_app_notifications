@@ -2,6 +2,8 @@ class AppNotificationsController < ApplicationController
   unloadable
   # helper :app_notifications
   # include AppNotificationsHelper
+  helper :custom_fields
+  helper :issues
 
   def index
     @app_notifications = AppNotification.includes(:issue, :author, :journal).where(recipient_id: User.current.id).order("created_on desc")
@@ -51,4 +53,10 @@ class AppNotificationsController < ApplicationController
     AppNotification.where(:recipient_id => User.current.id, :viewed => false).update_all( :viewed => true )
     redirect_to :action => 'index'
   end
+
+  def unread_number
+    @number = AppNotification.where(recipient_id: User.current.id, viewed: false).count
+    render :json => @number
+  end
+
 end

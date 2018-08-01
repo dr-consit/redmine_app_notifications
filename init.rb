@@ -6,6 +6,7 @@ Redmine::Plugin.register :redmine_app_notifications do
   url 'https://github.com/MichalVanzura/redmine_app_notifications'
   author_url 'https://github.com/MichalVanzura/redmine_app_notifications'
 
+=begin
   menu :top_menu, :app_notifications, { :controller => 'app_notifications', :action => 'index' }, {
   	:caption => :notifications, 
   	:last => true, 
@@ -19,6 +20,7 @@ Redmine::Plugin.register :redmine_app_notifications do
     :if => Proc.new { User.current.app_notification && AppNotification.where(recipient_id: User.current.id, viewed: false).count > 0 },
     :html => {:id => 'notification_count'}
   }
+=end
 
   settings :default => {
       'issue_added' => 'on',

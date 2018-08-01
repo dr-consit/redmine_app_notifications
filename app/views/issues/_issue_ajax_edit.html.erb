@@ -3,7 +3,7 @@
 	<div class="notification-container <%= 'new' if !notification.viewed %>">	
 		<div class="notification-title">
 			<%= avatar(notification.journal.user, :size => "24") %>
-			<%= l(:text_issue_updated, :id => "##{notification.issue.id}", :author => h(notification.journal.user)) %>
+			<%= l(:text_issue_updated, :id => "##{notification.issue.id} #{notification.issue.subject}", :author => h(notification.journal.user)) %>
 		</div>
 		<div class="notification-content">
 			<% journal_details.each do |string| %>
