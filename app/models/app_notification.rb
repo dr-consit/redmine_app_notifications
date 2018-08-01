@@ -6,6 +6,8 @@ class AppNotification < ActiveRecord::Base
 	belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
 	belongs_to :issue
 	belongs_to :journal
+	belongs_to :news
+	belongs_to :kbarticle, :class_name => 'KbArticle', :foreign_key => 'article_id'
 
 	def deliver
 		unless Setting.plugin_redmine_app_notifications['faye_server_adress'].empty?

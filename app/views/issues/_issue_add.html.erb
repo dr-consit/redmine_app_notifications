@@ -11,3 +11,31 @@
 	</a>
 </h3>
 <% end %>
+
+<% unless notification.kbarticle.nil? %>
+<%if !notification.viewed %>
+	<a class="view-notification" href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id) %>">
+		<%= l(:mark_as_seen) %>
+	</a>
+<% end %>
+<h3>
+	<%= avatar(notification.kbarticle.author) %>
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id) %>">
+		<strong><%= l(:text_article_added, :id => "##{notification.kbarticle.id} #{notification.kbarticle.title}", :author => h(notification.kbarticle.author)) %></strong>
+	</a>
+</h3>
+<% end %>
+
+<% unless notification.news.nil? %>
+<%if !notification.viewed %>
+	<a class="view-notification" href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id) %>">
+		<%= l(:mark_as_seen) %>
+	</a>
+<% end %>
+<h3>
+	<%= avatar(notification.news.author) %>
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id) %>">
+		<strong><%= l(:text_news_added, :id => "##{notification.news.id} #{notification.news.title}", :author => h(notification.news.author)) %></strong>
+	</a>
+</h3>
+<% end %>
