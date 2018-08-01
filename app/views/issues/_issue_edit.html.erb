@@ -23,3 +23,35 @@
 
 <%= textilizable(journal, :notes, :only_path => false) %>
 <% end %>
+
+
+<% unless notification.kbarticle.nil? %>
+<%if !notification.viewed %>
+	<a class="view-notification" href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id, :anchor => "change-#{notification.kbarticle.id}") %>">
+		<%= l(:mark_as_seen) %>
+	</a>
+<% end %>
+<h3>
+	<%= avatar(kbarticle.author) %>
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id, :anchor => "change-#{notification.kbarticle.id}") %>">
+		<strong><%= l(:text_article_updated, :id => "##{notification.kbarticle.id} #{notification.kbarticle.title}", :author => h(kbarticle.author)) %></strong>
+	</a>
+</h3>
+
+<% end %>
+
+
+<% unless notification.news.nil? %>
+<%if !notification.viewed %>
+	<a class="view-notification" href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id, :anchor => "change-#{notification.news.id}") %>">
+		<%= l(:mark_as_seen) %>
+	</a>
+<% end %>
+<h3>
+	<%= avatar(journal.user) %>
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id, :anchor => "change-#{notification.news.id}") %>">
+		<strong><%= l(:text_news_updated, :id => "##{notification.news.id} #{notification.news.title}", :author => h(journal.user)) %></strong>
+	</a>
+</h3>
+
+<% end %>

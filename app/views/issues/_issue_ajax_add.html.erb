@@ -9,3 +9,27 @@
 	</div>
 </a>
 <% end %>
+
+<% unless notification.kbarticle.nil? %>
+<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id) %>">
+	<div class="notification-container <%= 'new' if !notification.viewed %>">
+		<div class="notification-title">
+			<%= avatar(notification.kbarticle.author, :size => "24") %>
+			<%= l(:text_article_added, :id => "##{notification.kbarticle.id} #{notification.kbarticle.title}", :author => h(notification.kbarticle.author)) %>
+		</div>
+		<div class="notification-date"><%= format_time(notification.created_on) %></div>
+	</div>
+</a>
+<% end %>
+
+<% unless notification.news.nil? %>
+<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id) %>">
+	<div class="notification-container <%= 'new' if !notification.viewed %>">
+		<div class="notification-title">
+			<%= avatar(notification.news.author, :size => "24") %>
+			<%= l(:text_news_added, :id => "##{notification.news.id} #{notification.news.title}", :author => h(notification.news.author)) %>
+		</div>
+		<div class="notification-date"><%= format_time(notification.created_on) %></div>
+	</div>
+</a>
+<% end %>

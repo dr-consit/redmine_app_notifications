@@ -14,3 +14,28 @@
 	</div>
 </a>
 <% end %>
+
+<% unless notification.kbarticle.nil? %>
+<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id, :anchor => "change-#{notification.journal.id}") %>">
+	<div class="notification-container <%= 'new' if !notification.viewed %>">
+		<div class="notification-title">
+			<%= avatar(notification.journal.user, :size => "24") %>
+			<%= l(:text_article_updated, :id => "##{notification.kbarticle.id} #{notification.kbarticle.title}", :author => h(notification.kbarticle.author)) %>
+		</div>
+
+		<div class="notification-date"><%= format_time(notification.created_on) %></div>
+	</div>
+</a>
+<% end %>
+
+<% unless notification.news.nil? %>
+<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id, :anchor => "change-#{notification.journal.id}") %>">
+	<div class="notification-container <%= 'new' if !notification.viewed %>">	
+		<div class="notification-title">
+			<%= avatar(notification.journal.user, :size => "24") %>
+			<%= l(:text_news_updated, :id => "##{notification.news.id} #{notification.news.title}", :author => h(notification.news.author)) %>
+		</div>
+		<div class="notification-date"><%= format_time(notification.created_on) %></div>
+	</div>
+</a>
+<% end %>
