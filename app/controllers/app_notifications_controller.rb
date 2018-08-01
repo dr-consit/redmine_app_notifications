@@ -6,7 +6,7 @@ class AppNotificationsController < ApplicationController
   helper :issues
 
   def index
-    @app_notifications = AppNotification.includes(:issue, :author, :journal).where(recipient_id: User.current.id).order("created_on desc")
+    @app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).order("created_on desc")
     if request.xhr?
       @app_notifications = @app_notifications.limit(5)
       render :partial => "ajax"
@@ -44,7 +44,13 @@ class AppNotificationsController < ApplicationController
           render :partial => 'issues/issue_add', :formats => [:html], :locals => { :notification => @notification }
         end
       else
-        redirect_to :controller => 'issues', :action => 'show', :id => params[:issue_id], :anchor => params[:anchor]
+        if params[:issue_id]
+          redirect_to :controller => 'issues', :action => 'show', :id => params[:issue_id], :anchor => params[:anchor]
+        elsif params[:article_id]
+          redirect_to :controller => 'articles', :action => 'show', :id => params[:article_id], :project_id =>@notification.kbarticle.project, :anchor => params[:anchor]
+        elsif params[:news_id]
+          redirect_to :controller => 'news', :action => 'show', :id => params[:news_id], :anchor => params[:anchor]
+        end
       end
     end
   end
