@@ -24,3 +24,6 @@ en:
   text_article_updated: "KnowledgeBase article %{id} has been updated by %{author}."
   text_news_added: "News %{id} has been reported by %{author}."
   text_news_updated: "News %{id} has been updated by %{author}."
+  text_issue: "Issue"
+  text_article: "KnowledgeBase Article"
+  text_news: "News"
