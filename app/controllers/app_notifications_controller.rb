@@ -6,7 +6,8 @@ class AppNotificationsController < ApplicationController
   helper :issues
 
   def index
-    @app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).order("created_on desc")
+    #@app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).order("created_on desc")
+    @app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).group('issue_id', 'article_id', 'news_id').order(created_on: :desc)
     if request.xhr?
       @app_notifications = @app_notifications.limit(5)
       render :partial => "ajax"
@@ -28,7 +29,7 @@ class AppNotificationsController < ApplicationController
       @app_notifications = @app_notifications.where(viewed: false) if @new
     end
     @limit = 10
-    @app_notifications_pages = Paginator.new @app_notifications.count, @limit, params['page']
+    @app_notifications_pages = Paginator.new @app_notifications.count(:id).length, @limit, params['page']
     @offset ||= @app_notifications_pages.offset
     @app_notifications = @app_notifications.limit(@limit).offset(@offset)
   end

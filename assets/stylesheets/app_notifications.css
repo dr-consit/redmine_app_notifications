@@ -81,7 +81,7 @@
 	text-decoration: none;
 	display: block;
 	margin-right: 0;
-	border-bottom: 1px solid #dedede;
+	/*border-bottom: 1px solid #dedede;*/
 	font-weight: normal;
 	white-space: normal;
 }
@@ -107,7 +107,10 @@
 a.view-notification {
 	float: right;
 }
-
+#top-menu li #notificationsBody .notification-content a {
+        background: none;
+        vertical-align: baseline;
+}
 .push-notification {
     background-color: #333;
     position: fixed;
