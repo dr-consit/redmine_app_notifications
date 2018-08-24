@@ -46,7 +46,7 @@
 	font-size: 13px;
 	border-top: 1px solid #dddddd;
 }
-#notification_count {
+#notification_count, a.notice-count {
     background: none repeat scroll 0 0 #cc0000;
     border-radius: 9px;
     color: #ffffff;
@@ -127,4 +127,7 @@ a.view-notification {
     box-shadow: 4px 4px 4px #000;
     -webkit-box-shadow: 4px 4px 4px #000;
     -moz-box-shadow: 4px 4px 4px #000;
+}
+.pagination li {
+  display: inline-block;
 }

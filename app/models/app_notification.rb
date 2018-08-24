@@ -29,4 +29,17 @@ class AppNotification < ActiveRecord::Base
 			I18n.t(:text_issue_added, :id => "##{issue.id}", :author => author)
 		end
 	end
+
+        def similar_notices
+                @notices = AppNotification.where(recipient_id: self.recipient.id, viewed: self.viewed)
+                if not self.issue.nil?
+                        @notices = @notices.where(issue_id: self.issue.id).all
+                elsif not self.news.nil?
+                        @notices = @notices.where(news_id: self.news.id).all
+                elsif not self.kbarticle.nil?
+                        @notices = @notices.where(article_id: self.kbarticle.id).all
+                else
+                        @notices = nil
+                end
+        end
 end
