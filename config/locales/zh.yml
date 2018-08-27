@@ -29,3 +29,6 @@ zh:
   text_article_updated: "知识库文章 %{id} 已由 %{author} 更新。"
   text_news_added: "新闻 %{id} 已由 %{author} 更新。"
   text_news_updated: "新闻 %{id} 已由 %{author} 更新。"
+  text_issue: "问题"
+  text_article: "知识库文章"
+  text_news: "新闻"
