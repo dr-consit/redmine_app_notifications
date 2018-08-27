@@ -32,13 +32,15 @@ $(document).ready(function()
 	$(".view-notification").click(function()
 	{
 		var link = $( this );
+        	link.parent().removeClass( "new" );
+        	link.remove();
 		$.ajax({
         	type: "GET",
         	url: $(this).attr("href"),
         	dataType: 'html',
         	success: function() {
-        		link.parent().removeClass( "new" );
-        		link.remove();
+        		//link.parent().removeClass( "new" );
+        		//link.remove();
 			}
         });
 		return false;
