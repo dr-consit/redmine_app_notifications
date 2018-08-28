@@ -13,6 +13,7 @@ en:
   issue_priority_updated: "Issue priority updated"
   faye_server_adress: "Address of faye server (leave empty for turned off)"
   mark_as_seen: "Mark as seen"
+  mark_as_unseen: "Mark as unseen"
   mark_all_as_seen: "Mark all as seen"
   viewed_notification: "viewed notifications"
   new_notification: "new notifications"

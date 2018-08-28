@@ -36,8 +36,26 @@ class AppNotificationsController < ApplicationController
 
   def view
     @notification = AppNotification.find(params[:id])
+
     if @notification.recipient == User.current 
-      AppNotification.update(@notification, :viewed => true)
+      if params[:mark_as_unseen]
+        AppNotification.update(@notification, :viewed => false)
+      else
+        @notices = AppNotification.where(recipient_id: @notification.recipient.id, viewed: false)
+        if params[:issue_id]
+          @notices = @notices.where(issue_id: @notification.issue.id).all
+        elsif params[:news_id]
+          @notices = @notices.where(news_id: @notification.news.id).all
+        elsif params[:article_id]
+          @notices = @notices.where(article_id: @notification.kbarticle.id).all
+        else
+          @notices = nil
+        end
+        if @notices
+          @notices.update_all(:viewed => true)
+        end
+      end
+
       if request.xhr?
         if @notification.is_edited?
           render :partial => 'issues/issue_edit', :formats => [:html], :locals => { :notification => @notification, :journal => @notification.journal }

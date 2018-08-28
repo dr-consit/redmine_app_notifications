@@ -13,6 +13,7 @@ zh:
   issue_priority_updated: "任务优先级更新"
   faye_server_adress: "faye服务器地址（置空则关闭）"
   mark_as_seen: "标记为已读"
+  mark_as_seen: "标记为未读"
   mark_all_as_seen: "标记所有为已读"
   viewed_notification: "已显示的提醒"
   new_notification: "新提醒"
