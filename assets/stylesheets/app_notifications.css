@@ -55,6 +55,18 @@
     margin-left: -5px;
     margin-top: -1px;
     padding: 1px 5px;
+    float: right;
+}
+a.notice-count-seen {
+    background: none repeat scroll 0 0 #628db6;
+    border-radius: 9px;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: -5px;
+    margin-top: -1px;
+    padding: 1px 5px;
+    float: right;
 }
 .notification-container {
 	padding: 10px 15px;

@@ -22,15 +22,15 @@ $(document).ready(function(){
     <div class="notification <%= "new" if !notification.viewed %>">
     <% if notification.similar_notices && notification.similar_notices.count > 1 %>
         <% unless notification.issue.nil? %>
-            <h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_issue)%>] #<%= notification.issue.id %> <%= notification.issue.subject %></a><a class="view-notification notice-count" href="#"><%= notification.similar_notices.count %></a></h3>
+	<h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_issue)%>] #<%= notification.issue.id %> <%= notification.issue.subject %></a><a class="notice-count<%= "-seen" if notification.viewed %>" href="#"><%= notification.similar_notices.count %></a></h3>
         <% end %>
 
         <% unless notification.kbarticle.nil? %>
-            <h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_article)%>] #<%= notification.kbarticle.id %> <%= notification.kbarticle.title %></a><a class="view-notification notice-count" href="#"><%= notification.similar_notices.count %></a></h3>
+            <h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_article)%>] #<%= notification.kbarticle.id %> <%= notification.kbarticle.title %></a><a class="notice-count<%= "-seen" if notification.viewed %>" href="#"><%= notification.similar_notices.count %></a></h3>
         <% end %>
 
         <% unless notification.news.nil? %>
-            <h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_news)%>] #<%= notification.news.id %> <%= notification.news.title %></a><a class="view-notification notice-count" href="#"><%= notification.similar_notices.count %></a></h3>
+            <h3><a class="notice-list-title" id="<%= notification.id %>" href="#">[<%=l(:text_news)%>] #<%= notification.news.id %> <%= notification.news.title %></a><a class="notice-count<%= "-seen" if notification.viewed %>" href="#"><%= notification.similar_notices.count %></a></h3>
         <% end %>
 
         <% if notification.similar_notices %>
