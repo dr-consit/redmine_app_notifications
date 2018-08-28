@@ -36,16 +36,17 @@ $(document).ready(function()
                 // single notification toggle
                 if (link.parent().hasClass('notification')) {
                     if (link.parent().hasClass('new')) {
-        	        link.parent().removeClass( "new" );
+        	        link.parent().removeClass("new");
                     } else {
-        	        link.parent().addClass( "new" );
+        	        link.parent().addClass("new");
                     }
                 }
+                // group notices toogle
                 else {
                     if (link.parent().parent().parent().hasClass('new')) {
-        	        link.parent().parent().parent().removeClass( "new" );
+        	        link.parent().parent().parent().removeClass("new");
                     } else {
-        	        link.parent().parent().parent().addClass( "new" );
+        	        link.parent().addClass("notification new"); // Mark as seen only for single notification
                     }
                 }
         	link.remove();
