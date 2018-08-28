@@ -32,7 +32,22 @@ $(document).ready(function()
 	$(".view-notification").click(function()
 	{
 		var link = $( this );
-        	link.parent().removeClass( "new" );
+                
+                // single notification toggle
+                if (link.parent().hasClass('notification')) {
+                    if (link.parent().hasClass('new')) {
+        	        link.parent().removeClass( "new" );
+                    } else {
+        	        link.parent().addClass( "new" );
+                    }
+                }
+                else {
+                    if (link.parent().parent().parent().hasClass('new')) {
+        	        link.parent().parent().parent().removeClass( "new" );
+                    } else {
+        	        link.parent().parent().parent().addClass( "new" );
+                    }
+                }
         	link.remove();
 		$.ajax({
         	type: "GET",
