@@ -16,6 +16,8 @@ $(document).ready(function(){
       $('#notice-list-' + _id).toggle();
     });
   });
+var locale_str_mark_as_unseen = "<%= l(:mark_as_unseen) %>";
+var locale_str_mark_as_seen = "<%= l(:mark_as_seen) %>";
 </script>
 
 <% @app_notifications.each do |notification| %>
