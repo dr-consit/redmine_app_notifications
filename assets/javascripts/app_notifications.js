@@ -1,18 +1,7 @@
-function queryStringUrlReplacement(url, param, value) 
-{
-    var re = new RegExp("[\\?&]" + param + "=([^&#]*)"), match = re.exec(url), delimiter, newString;
-
-    if (match === null) {
-        // append new param
-        var hasQuestionMark = /\?/.test(url); 
-        delimiter = hasQuestionMark ? "&" : "?";
-        newString = url + delimiter + param + "=" + value;
-    } else {
-        delimiter = match[0].charAt(0);
-        newString = url.replace(re, delimiter + param + "=" + value);
-    }
-  
-    return newString;
+function urlSetParam(uri, key, val) {
+    return uri
+        .replace(new RegExp("([?&]"+key+"(?=[=&#]|$)[^#&]*|(?=#|$))"), "&"+key+"="+encodeURIComponent(val))
+        .replace(/^([^?&]+)&/, "$1?");
 }
 
 $(document).ready(function()
@@ -64,11 +53,11 @@ $(document).ready(function()
                 if (link.parent().hasClass('notification')) {
                     if (link.parent().hasClass('new')) {
         	        link.parent().removeClass("new");
-                        link.attr('href', queryStringUrlReplacement(link.attr('href'), 'mark_as_unseen', 1));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', 1));
                         link.text(locale_str_mark_as_unseen).fadeIn();
                     } else {
         	        link.parent().addClass("new");
-                        link.attr('href', queryStringUrlReplacement(link.attr('href'), 'mark_as_unseen', ''));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', ''));
                         link.text(locale_str_mark_as_seen).fadeIn();
                     }
                 }
@@ -78,11 +67,11 @@ $(document).ready(function()
                         group_parent = link.parent().parent().parent()
         	        group_parent.removeClass("new");
                         all_links = group_parent.find('.view-notification')
-                        all_links.attr('href', queryStringUrlReplacement(all_links.attr('href'), 'mark_as_unseen', 1));
+                        all_links.attr('href', urlSetParam(all_links.attr('href'), 'mark_as_unseen', 1));
                         all_links.text(locale_str_mark_as_unseen).fadeIn();
                     } else {
         	        link.parent().addClass("notification new"); // Mark as seen only for single notification
-                        link.attr('href', queryStringUrlReplacement(link.attr('href'), 'mark_as_unseen', ''));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', ''));
                         link.text(locale_str_mark_as_seen).fadeIn();
                     }
                 }
