@@ -6,8 +6,7 @@ class AppNotificationsController < ApplicationController
   helper :issues
 
   def index
-    #@app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).order("created_on desc")
-    @app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).group('issue_id', 'article_id', 'news_id').order(created_on: :desc)
+    @app_notifications = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id).group('issue_id', 'article_id', 'news_id', 'is_tmp').order(is_tmp: :desc, days: :asc,created_on: :desc)
     if request.xhr?
       @app_notifications = @app_notifications.limit(5)
       render :partial => "ajax"
@@ -34,6 +33,7 @@ class AppNotificationsController < ApplicationController
     @app_notifications = @app_notifications.limit(@limit).offset(@offset)
   end
 
+   
   def view
     @notification = AppNotification.find(params[:id])
 
@@ -41,7 +41,8 @@ class AppNotificationsController < ApplicationController
       if params[:mark_as_unseen]
         AppNotification.update(@notification, :viewed => false)
       else
-        @notices = AppNotification.where(recipient_id: @notification.recipient.id, viewed: false)
+       if !@notification.is_tmp
+        @notices = AppNotification.where(recipient_id: @notification.recipient.id, viewed: false, is_tmp: false)
         if params[:issue_id]
           @notices = @notices.where(issue_id: @notification.issue.id).all
         elsif params[:news_id]
@@ -54,8 +55,13 @@ class AppNotificationsController < ApplicationController
         if @notices
           @notices.update_all(:viewed => true)
         end
-      end
-
+       else
+        @notices = AppNotification.where(recipient_id: @notification.recipient.id, issue_id: @notification.issue.id, viewed: false, is_tmp: true).all
+         if @notices
+          @notices.update_all(:viewed => true)
+         end  
+       end
+      end      
       if request.xhr?
         if @notification.is_edited?
           render :partial => 'issues/issue_edit', :formats => [:html], :locals => { :notification => @notification, :journal => @notification.journal }
@@ -75,13 +81,39 @@ class AppNotificationsController < ApplicationController
   end
 
   def view_all
-    AppNotification.where(:recipient_id => User.current.id, :viewed => false).update_all( :viewed => true )
+  @notifications = AppNotification.where(:recipient_id => User.current.id, :viewed => false).update_all( :viewed => true)
     redirect_to :action => 'index'
   end
 
   def unread_number
     @number = AppNotification.where(recipient_id: User.current.id, viewed: false).count
     render :json => @number
+  end
+
+  def live_notification_list
+    @list = AppNotification.includes(:issue, :author, :journal, :kbarticle, :news).where(recipient_id: User.current.id, viewed: false).order("created_on desc").limit(1)
+    @new_list = []
+    @list.each do |n|
+       notify = {id: n.id} 
+       #logger.info("=============" + n.id.to_s);
+       unless n.issue.nil?
+           notify['icon'] = n.issue.author.avatar ? (url_for :only_path => false, :controller => "people", :action => "avatar", :id => n.issue.author.avatar, :size => 14) : "/plugin_assets/redmine_people/images/person.png"
+           notify['title'] = n.issue.subject
+           notify['url'] = url_for :controller => 'app_notifications', :action => 'view', :id => n.id, :issue_id => n.issue.id#, :anchor => "change-#{n.journal.id}"
+       end
+       unless n.kbarticle.nil?
+           notify['icon'] = n.kbarticle.author.avatar ? (url_for :only_path => false, :controller => "people", :action => "avatar", :id => n.kbarticle.author.avatar, :size => 14) : "/plugin_assets/redmine_people/images/person.png"
+           notify['title'] = n.kbarticle.title
+           notify['url'] = url_for :controller => 'app_notifications', :action => 'view', :id => n.id, :article_id => n.kbarticle.id, :anchor => "change-#" + n.kbarticle.id
+       end
+       unless n.news.nil?
+	   notify['icon'] = n.news.author.avatar ? (url_for :only_path => false, :controller => "people", :action => "avatar", :id => n.news.author.avatar, :size => 14) : "/plugin_assets/redmine_people/images/person.png"
+           notify['title'] = n.news.subject
+           notify['url'] = url_for :controller => 'app_notifications', :action => 'view', :id => n.id, :news_id => n.news.id, :anchor => "change-#" + n.news.id
+       end
+       @new_list.append(notify)
+    end
+    render :json => @new_list
   end
 
 end

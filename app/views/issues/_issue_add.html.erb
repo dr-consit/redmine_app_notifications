@@ -10,7 +10,7 @@
 <% end %>
 <h3>
 	<%= avatar(notification.issue.author) %>
-	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :issue_id => notification.issue.id) %>">
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :issue_id => notification.issue.id) %>"  target="_blank">
 		<strong><%= l(:text_issue_added, :id => "##{notification.issue.id} #{notification.issue.subject}", :author => h(notification.issue.author)) %></strong>
 	</a>
 </h3>
@@ -28,7 +28,7 @@
 <% end %>
 <h3>
 	<%= avatar(notification.kbarticle.author) %>
-	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id) %>">
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :article_id => notification.kbarticle.id) %>"  target="_blank">
 		<strong><%= l(:text_article_added, :id => "##{notification.kbarticle.id} #{notification.kbarticle.title}", :author => h(notification.kbarticle.author)) %></strong>
 	</a>
 </h3>
@@ -46,7 +46,7 @@
 <% end %>
 <h3>
 	<%= avatar(notification.news.author) %>
-	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id) %>">
+	<a href="<%= url_for(:controller => 'app_notifications', :action => 'view', :id => notification.id, :news_id => notification.news.id) %>"  target="_blank">
 		<strong><%= l(:text_news_added, :id => "##{notification.news.id} #{notification.news.title}", :author => h(notification.news.author)) %></strong>
 	</a>
 </h3>

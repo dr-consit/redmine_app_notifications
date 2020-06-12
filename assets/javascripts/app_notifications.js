@@ -53,11 +53,11 @@ $(document).ready(function()
                 if (link.parent().hasClass('notification')) {
                     if (link.parent().hasClass('new')) {
         	        link.parent().removeClass("new");
-                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', 1));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', ''));
                         link.text(locale_str_mark_as_unseen).fadeIn();
                     } else {
         	        link.parent().addClass("new");
-                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', ''));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', 1));
                         link.text(locale_str_mark_as_seen).fadeIn();
                     }
                 }
@@ -67,11 +67,11 @@ $(document).ready(function()
                         group_parent = link.parent().parent().parent()
         	        group_parent.removeClass("new");
                         all_links = group_parent.find('.view-notification')
-                        all_links.attr('href', urlSetParam(all_links.attr('href'), 'mark_as_unseen', 1));
+                        all_links.attr('href', urlSetParam(all_links.attr('href'), 'mark_as_unseen', ''));
                         all_links.text(locale_str_mark_as_unseen).fadeIn();
                     } else {
         	        link.parent().addClass("notification new"); // Mark as seen only for single notification
-                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', ''));
+                        link.attr('href', urlSetParam(link.attr('href'), 'mark_as_unseen', 1));
                         link.text(locale_str_mark_as_seen).fadeIn();
                     }
                 }
@@ -79,6 +79,8 @@ $(document).ready(function()
 		return false;
 	});
 
+        if ($('#notificationsLink').length > 0) // in case of double Login Popup Window at signin page
+        {
         $.ajax({
             type: "GET",
             url: "/app-notifications/unread-number/",
@@ -88,6 +90,7 @@ $(document).ready(function()
                 $("#notification_count").show();
             }
         });
+        }
 
         $("#notification_count").click(function()
         {

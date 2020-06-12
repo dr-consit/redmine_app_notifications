@@ -1,62 +1,93 @@
 <% content_for :header_tags do %>
-	<%= javascript_include_tag "app_notifications", :plugin => "redmine_app_notifications" %>
+    <%= javascript_include_tag "app_notifications", :plugin => "redmine_app_notifications" %>
     <%= stylesheet_link_tag "app_notifications", :plugin => "redmine_app_notifications" %>
-    <% unless Setting.plugin_redmine_app_notifications['faye_server_adress'].empty? %>
-    	<%= javascript_include_tag "#{Setting.plugin_redmine_app_notifications['faye_server_adress']}/faye.js" %>
-	    <script>
-			function getIssueIdFromMessage(message)
-			{
-				return message.match(/#(\d+)/)[1];
-			}
+    <% if User.current.app_notification_desktop %>
+        <%= javascript_include_tag "notify", :plugin => "redmine_app_notifications" %>
+        <script>
+		function getIssueIdFromMessage(message)
+		{
+			return message.match(/#(\d+)/)[1];
+		}
 
-			function showNotification(data)
-			{
-				var notification = new Notification("Redmine", { "tag": "notification-"+getIssueIdFromMessage(data.message), "body": data.message, "icon": data.avatar });
-				notification.onclick = function(x) {
-					window.focus();
-					var issueId = getIssueIdFromMessage(this.body);
-					this.close();
-					location.href = "<%= url_for(:controller => 'app_notifications', :action => 'index') %>/"+data.id+"?issue_id="+issueId;
-				 };
-			}
+		function showNotification(data)
+		{
+			var notification = new Notification("Redmine", { "tag": "notification-"+getIssueIdFromMessage(data.message), "body": data.message, "icon": data.avatar });
+			notification.onclick = function(x) {
+				window.focus();
+				var issueId = getIssueIdFromMessage(this.body);
+				this.close();
+				location.href = "<%= url_for(:controller => 'app_notifications', :action => 'index') %>/"+data.id+"?issue_id="+issueId;
+			 };
+		}
 
-		    $(document).ready(function()
-				{
-					try {
-						var client = new Faye.Client("<%= Setting.plugin_redmine_app_notifications['faye_server_adress'] %>");
-					} catch(e) {
-						$("#notificationsLink").parent().after("<li><span class=\"notification-title\">(<%= l(:unreachable_faye_server) %>)</span></li>");
-						return true;
-					}
+                function onShowNotification () {
+                    console.log('notification is shown!');
+                }
 
-					var private_subscription = client.subscribe('/notifications/private/<%= User.current.id %>', function(data) {
-					if($("#notification_count").length == 0) {
-						$("#notificationsLink").parent().after("<li><span id='notification_count'></span></li>");
-					}
-					$("#notification_count").text(data.count);
-					var useDesktopNotifications = false;
-					<% if User.current.app_notification_desktop %>
-					useDesktopNotifications = true;
-					<% end %>
+                function onCloseNotification () {
+                    console.log('notification is closed!');
+                }
 
-					if (!("Notification" in window) || !useDesktopNotifications) {
-					    $(document.body).append("<div class='push-notification hide' id='notification-" + data.id + "'>" + data.message + "</div>");
-					    $("#notification-" + data.id).fadeIn('fast').delay(10000).fadeOut(1200, function() {
-						$("#notification-" + data.id).remove();
-					    });
-					}
-					else {
-					    if (Notification.permission === "granted")
-							showNotification(data);
-						else if (Notification.permission !== "denied") {
-							Notification.requestPermission(function(permission) {
-								if (permission === "granted")
-									showNotification(data);
-							});
-						}
-					}
-				});
-			});
-		</script>
-	<% end %>
+                function onClickNotification () {
+                    console.log('notification was clicked!');
+                }
+
+                function onErrorNotification () {
+                    console.error('Error showing notification. You may need to request permission.');
+                }
+
+                function onPermissionGranted () {
+                    console.log('Permission has been granted by the user');
+                    doNotification();
+                }
+
+                function onPermissionDenied () {
+                    console.warn('Permission has been denied by the user');
+                }
+
+                function doNotification () {
+                    $.ajax({
+                        type: "GET",
+                        url: "/app-notifications/live/",
+                        dataType: 'json',
+                        success: function(data) {
+                          if (data.length > 0) {
+                            for (i in data) {
+                                var n = new Notify('Redmine #' + data[i].id, {
+                                    body: data[i].title,
+                                    tag: '',
+                                    icon: data[i].icon,
+                                    notifyShow: onShowNotification,
+                                    notifyClose: onCloseNotification,
+                                    notifyClick: function(){
+                                                     window.focus();
+                                                     this.close();
+                                                     location.href = data[i].url; 
+                                                 },
+                                    notifyError: onErrorNotification//,
+                                    //timeout: 60 // 60 secs
+                                });
+                                n.show();
+                            }
+                          }
+                        }
+                    });
+                }
+
+                function enableLiveDesktopNotification()
+                {
+                    if (!Notify.needsPermission) {
+                         doNotification(); // do once at first
+                         //setInterval(function(){doNotification();}, 120*1000); // then do per 120 secs
+                    } else if (Notify.isSupported()) {
+                         Notify.requestPermission(onPermissionGranted, onPermissionDenied);
+                    }
+                }
+
+	        $(document).ready(function()
+		{
+                    enableLiveDesktopNotification();
+		});
+	</script>
+    <% end %>
 <% end %>

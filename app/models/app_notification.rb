@@ -31,7 +31,7 @@ class AppNotification < ActiveRecord::Base
 	end
 
         def similar_notices
-                @notices = AppNotification.where(recipient_id: self.recipient.id, viewed: self.viewed)
+                @notices = AppNotification.where(recipient_id: self.recipient.id, viewed: self.viewed, is_tmp: false)
                 if not self.issue.nil?
                         @notices = @notices.where(issue_id: self.issue.id).all
                 elsif not self.news.nil?
