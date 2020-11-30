@@ -1,4 +1,4 @@
-class CreateAppNotifications < ActiveRecord::Migration
+class CreateAppNotifications < Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRecord::Migration[4.2]
   def change
     create_table :app_notifications do |t|
       t.datetime :created_on
