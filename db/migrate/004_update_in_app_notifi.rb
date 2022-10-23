@@ -1,4 +1,4 @@
-class UpdateInAppNotifi < ActiveRecord::Migration
+class UpdateInAppNotifi < Rails.version < '5.1' ? ActiveRecord::Migration : ActiveRecord::Migration[4.2]
     def self.up
         change_column_default :users, :app_notification, true
         

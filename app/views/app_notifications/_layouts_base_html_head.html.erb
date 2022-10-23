@@ -1,93 +1,16 @@
 <% content_for :header_tags do %>
-    <%= javascript_include_tag "app_notifications", :plugin => "redmine_app_notifications" %>
-    <%= stylesheet_link_tag "app_notifications", :plugin => "redmine_app_notifications" %>
-    <% if User.current.app_notification_desktop %>
-        <%= javascript_include_tag "notify", :plugin => "redmine_app_notifications" %>
-        <script>
-		function getIssueIdFromMessage(message)
-		{
-			return message.match(/#(\d+)/)[1];
-		}
-
-		function showNotification(data)
-		{
-			var notification = new Notification("Redmine", { "tag": "notification-"+getIssueIdFromMessage(data.message), "body": data.message, "icon": data.avatar });
-			notification.onclick = function(x) {
-				window.focus();
-				var issueId = getIssueIdFromMessage(this.body);
-				this.close();
-				location.href = "<%= url_for(:controller => 'app_notifications', :action => 'index') %>/"+data.id+"?issue_id="+issueId;
-			 };
-		}
-
-                function onShowNotification () {
-                    console.log('notification is shown!');
-                }
-
-                function onCloseNotification () {
-                    console.log('notification is closed!');
-                }
-
-                function onClickNotification () {
-                    console.log('notification was clicked!');
-                }
-
-                function onErrorNotification () {
-                    console.error('Error showing notification. You may need to request permission.');
-                }
-
-                function onPermissionGranted () {
-                    console.log('Permission has been granted by the user');
-                    doNotification();
-                }
-
-                function onPermissionDenied () {
-                    console.warn('Permission has been denied by the user');
-                }
-
-                function doNotification () {
-                    $.ajax({
-                        type: "GET",
-                        url: "/app-notifications/live/",
-                        dataType: 'json',
-                        success: function(data) {
-                          if (data.length > 0) {
-                            for (i in data) {
-                                var n = new Notify('Redmine #' + data[i].id, {
-                                    body: data[i].title,
-                                    tag: '',
-                                    icon: data[i].icon,
-                                    notifyShow: onShowNotification,
-                                    notifyClose: onCloseNotification,
-                                    notifyClick: function(){
-                                                     window.focus();
-                                                     this.close();
-                                                     location.href = data[i].url; 
-                                                 },
-                                    notifyError: onErrorNotification//,
-                                    //timeout: 60 // 60 secs
-                                });
-                                n.show();
-                            }
-                          }
-                        }
-                    });
-                }
-
-                function enableLiveDesktopNotification()
-                {
-                    if (!Notify.needsPermission) {
-                         doNotification(); // do once at first
-                         //setInterval(function(){doNotification();}, 120*1000); // then do per 120 secs
-                    } else if (Notify.isSupported()) {
-                         Notify.requestPermission(onPermissionGranted, onPermissionDenied);
-                    }
-                }
-
-	        $(document).ready(function()
-		{
-                    enableLiveDesktopNotification();
-		});
-	</script>
-    <% end %>
+  <% if User.current.app_notification_desktop %>
+    <%= javascript_include_tag "notify", :plugin => "redmine_app_notifications" %>
+  <% end %>
+  <% unless Setting.plugin_redmine_app_notifications["faye_server_adress"].empty? %>
+    <%= javascript_include_tag "#{Setting.plugin_redmine_app_notifications["faye_server_adress"]}/faye.js" %>
+  <% end %>
+  <%= javascript_include_tag "app_notifications", :plugin => "redmine_app_notifications" %>
+  <%= stylesheet_link_tag "app_notifications", :plugin => "redmine_app_notifications" %>
+  <script>
+    let AppNotifications = {};
+    AppNotifications.NotificationsUrl = '<%= url_for(:controller => "app_notifications", :action => "index") %>';
+    AppNotifications.FayeServer = '<%= Setting.plugin_redmine_app_notifications["faye_server_adress"] %>';
+    AppNotifications.CurrentUserId = <%= User.current.id %>; 
+  </script>
 <% end %>

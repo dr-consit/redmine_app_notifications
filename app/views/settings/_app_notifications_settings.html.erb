@@ -9,5 +9,7 @@
         </td>
       </tr>
     <% end %>
+    <label><%= l(:label_faye_server_adress) %></label>
+    <%= text_field_tag "settings[faye_server_adress]", settings["faye_server_adress"].to_s, :size => 35 %>
   </tbody>
 </table>

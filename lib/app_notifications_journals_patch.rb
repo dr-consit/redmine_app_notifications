@@ -5,49 +5,47 @@ module AppNotificationsJournalsPatch
     after_create :create_app_notifications_after_create_journal
   end
 
-  MENTIONS_RE = /href="\/users\/([\d]+)">@/
+  # Returns the users that should be notified
+  def my_notified_users
+    # Author and assignee are always notified unless they have been
+    # locked or don't want to be notified
+    notified = [journalized.author, journalized.assigned_to, journalized.previous_assignee].compact.uniq
 
-  def get_mentioned_users(text)
-    if text
-      user_ids = []
-      text.gsub!(MENTIONS_RE) do
-        user_id = $1
-        if user_id
-          user_ids.push(user_id)
-        end
-      end
-      users = User.where(:id => user_ids)
-    else
-      users = []
-    end
+    notified = notified.map { |n| n.is_a?(Group) ? n.users : n }.flatten
+    notified.uniq!
+    notified = notified.select { |u| u.active? }
+
+    notified += journalized.project.notified_users
+    notified += journalized.project.users.preload(:preference).select(&:notify_about_high_priority_issues?) if journalized.priority.high?
+    notified.uniq!
+    # Remove users that can not view the issue
+    notified.reject! { |user| !journalized.visible?(user) }
+    notified
   end
 
   def create_app_notifications_after_create_journal
+    if notify? && (Setting.plugin_redmine_app_notifications.include?("issue_updated") ||
+                   (Setting.plugin_redmine_app_notifications.include?("user_mentioned")) ||
+                   (Setting.plugin_redmine_app_notifications.include?("issue_note_added") && journalized.notes.present?) ||
+                   (Setting.plugin_redmine_app_notifications.include?("issue_status_updated") && journalized.status.present?) ||
+                   (Setting.plugin_redmine_app_notifications.include?("issue_assigned_to_updated") && journalized.detail_for_attribute("assigned_to_id").present?) ||
+                   (Setting.plugin_redmine_app_notifications.include?("issue_priority_updated") && journalized.new_value_for("priority_id").present?))
+      this_issue = journalized
+      l_to_users = my_notified_users
+      l_cc_users = notified_watchers - l_to_users
+      l_author = user
 
-    if notify? && (Setting.plugin_redmine_app_notifications.include?('issue_updated') ||
-        (Setting.plugin_redmine_app_notifications.include?('user_mentioned')) ||
-        (Setting.plugin_redmine_app_notifications.include?('issue_note_added') && journalized.notes.present?) ||
-        (Setting.plugin_redmine_app_notifications.include?('issue_status_updated') && journalized.status.present?) ||
-        (Setting.plugin_redmine_app_notifications.include?('issue_assigned_to_updated') && journalized.detail_for_attribute('assigned_to_id').present?) ||
-        (Setting.plugin_redmine_app_notifications.include?('issue_priority_updated') && journalized.new_value_for('priority_id').present?)
-      )
-      issue = journalized.reload
-      to_users = notified_users
-      cc_users = notified_watchers - to_users
-      issue = journalized
-      @author = user
-      @issue = issue
+      parse_mentions()
 
-      mentioned_users = get_mentioned_users(@issue.notes)
-      @users = to_users + cc_users + mentioned_users
+      l_users = l_to_users + l_cc_users + mentioned_users
 
-      @users.each do |user|
-        if user.app_notification && user.id != @author.id
+      l_users.each do |l_user|
+        if l_user.app_notification && l_user.id != l_author.id
           notification = AppNotification.create({
             :journal_id => id,
-            :issue_id => @issue.id,
-            :author_id => @author.id,
-            :recipient_id => user.id,
+            :issue_id => this_issue.id,
+            :author_id => l_author.id,
+            :recipient_id => l_user.id,
           })
           notification.deliver
         end

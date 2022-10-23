@@ -46,7 +46,22 @@
 	font-size: 13px;
 	border-top: 1px solid #dddddd;
 }
-#notification_count, a.notice-count {
+
+.notice-list-title {
+	vertical-align: sub;
+}
+
+#top-menu #notification_count, a.notice-count {
+	background: #9d0000;
+	color: white;
+	height: 1rem;
+	display: inline-block;
+	vertical-align: top !important;
+	margin: 0;
+	padding: 1px 2px 3px 2px;
+	border-radius: 0.5rem;
+	font-size: 1.2rem;
+/*	
     background: none repeat scroll 0 0 #cc0000;
     border-radius: 9px;
     color: #ffffff;
@@ -56,8 +71,18 @@
     margin-top: -1px;
     padding: 1px 5px;
     float: right;
+*/		
 }
 a.notice-count-seen {
+	background: #009d00;
+	height: 1rem;
+	display: inline-block;
+	top: 0;
+	vertical-align: top;
+	margin: 0;
+	padding: 1px 2px 1px 2px;
+	border-radius: 0.5rem;	
+/*		
     background: none repeat scroll 0 0 #628db6;
     border-radius: 9px;
     color: #ffffff;
@@ -67,6 +92,7 @@ a.notice-count-seen {
     margin-top: -1px;
     padding: 1px 5px;
     float: right;
+*/		
 }
 .notification-container {
 	padding: 10px 15px;
@@ -95,7 +121,6 @@ a.notice-count-seen {
 	margin-right: 0;
 	/*border-bottom: 1px solid #dedede;*/
 	font-weight: normal;
-	white-space: normal;
 }
 .notification-date {
 	color: #628DB6;
@@ -106,6 +131,7 @@ a.notice-count-seen {
 	font-weight: bold;
 	color: #3E5B76;
 	font-size: 12px;
+	white-space: normal;
 }
 .notification-content {
 	color: #666666;
@@ -118,6 +144,11 @@ a.notice-count-seen {
 
 a.view-notification {
 	float: right;
+}
+
+#notificationsBody a.view-notification {
+	float: none;
+	display: inline;
 }
 #top-menu li #notificationsBody .notification-content a {
         background: none;
