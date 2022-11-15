@@ -35,9 +35,12 @@ module AppNotificationsJournalsPatch
       l_cc_users = notified_watchers - l_to_users
       l_author = user
 
-      parse_mentions()
-
-      l_users = l_to_users + l_cc_users + mentioned_users
+      if respond_to?(:parse_mentions) then
+        parse_mentions()
+        l_users = l_to_users + l_cc_users + mentioned_users
+      else
+        l_users = l_to_users + l_cc_users
+      end
 
       l_users.each do |l_user|
         if l_user.app_notification && l_user.id != l_author.id
