@@ -15,7 +15,7 @@ class AppNotification < ActiveRecord::Base
       message = { :channel => channel, :data => { count: AppNotification.where(recipient_id: recipient.id, viewed: false).count, message: message_text, id: id, avatar: gravatar_url(author.mail, { :default => Setting.gravatar_default }) } }
       uri = URI.parse(Setting.plugin_redmine_app_notifications["faye_server_adress"])
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      http.use_ssl = uri.instance_of? URI::HTTPS
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       request = Net::HTTP::Post.new(uri)
       request.set_form_data(:message => message.to_json)
